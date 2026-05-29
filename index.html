@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-NMZ4GXJH');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HRA – Partner Stores Near You</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="hra.css">
+  <script src="stores.js"></script>
+  <style>
+    :root {
+      --navy: #012e71;
+      --blue: #008ed0;
+      --gold: #ffc631;
+      --gray: #cfcecb;
+      --bg:   #f8f9fd;
+      --fs-xs:   clamp(10px, 1.2vw + 8px,  12px);
+      --fs-sm:   clamp(11px, 1.4vw + 9px,  13px);
+      --fs-base: clamp(13px, 1.6vw + 10px, 15px);
+      --fs-md:   clamp(14px, 2vw  + 10px,  17px);
+      --fs-lg:   clamp(16px, 2.5vw + 11px, 20px);
+      --fs-xl:   clamp(18px, 3vw  + 12px,  26px);
+    }
+    /* ── Store list sub-header ── */
+    /* Fluid type overrides */
+    h2 { font-size: var(--fs-xl) !important; }
+    .store-card div.fw-bold { font-size: var(--fs-md) !important; }
+    .store-card div[style*="font-size:13px"] { font-size: var(--fs-sm) !important; }
+    .dist-badge { font-size: var(--fs-xs) !important; }
+    .bottom-banner div.fw-bold[style] { font-size: var(--fs-lg) !important; }
+
+    .list-sub-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: #fff;
+      border-bottom: 1px solid #f0f0f0;
+      box-shadow: 0 4px 12px rgba(0,0,0,.03);
+      padding: 18px 20px;
+    }
+
+    /* ── Store card ── */
+    .store-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border: 1px solid transparent;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow .2s, border-color .2s, transform .15s;
+    }
+    .store-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,.09);
+      border-color: rgba(0,142,208,.12);
+      color: inherit;
+    }
+    .store-card:active { transform: scale(.98); }
+
+    /* ── Icon circle ── */
+    .icon-circle {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(1,46,113,.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Bottom banner ── */
+    .bottom-banner {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 84px;
+      background: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 20px 20px;
+      z-index: 50;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .bottom-banner:hover { background: #0070a6; }
+
+    @media (min-width: 768px) {
+      .bottom-banner {
+        border-radius: 24px 24px 0 0;
+        max-width: 896px;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 90px;
+        padding-bottom: 16px;
+      }
+    }
+
+    /* ── Store list pagination ── */
+    .store-pagination {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0 28px;
+    }
+    .store-pagination__nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .store-pagination__btn {
+      min-width: 36px;
+      height: 36px;
+      padding: 0 10px;
+      border-radius: 50px;
+      border: 1.5px solid rgba(1,46,113,.12);
+      background: #fff;
+      color: var(--navy);
+      font-weight: 700;
+      font-size: var(--fs-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s, color .15s, border-color .15s;
+      font-family: inherit;
+    }
+    .store-pagination__btn:hover:not(:disabled):not(.is-active) {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+    .store-pagination__btn.is-active {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
+    .store-pagination__btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+    .store-pagination__status {
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      color: var(--gray);
+      margin: 0;
+      text-align: center;
+    }
+
+    /* Temporarily hidden — remove this block to show again */
+    .hra-header .btn-all-offers,
+    .bottom-banner {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NMZ4GXJH"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="app-shell">
+
+  <!-- ══ SECTION 1 – HEADER ══ -->
+  <header class="hra-header">
+    <img src="Photo/HRA logo.png" alt="HRA" style="height:34px;object-fit:contain">
+    <a href="offers.html" class="btn-blue btn-all-offers">
+      All Offers <i class="bi bi-arrow-right fw-bold"></i>
+    </a>
+  </header>
+
+  <!-- ══ BODY ══ -->
+  <div class="body-scroll">
+    <div style="max-width:896px;margin:0 auto">
+
+      <section class="d-flex flex-column w-100">
+
+        <!-- ── SECTION 4 – List sticky sub-header ── -->
+        <div class="list-sub-header">
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div>
+              <h2 class="fw-bold mb-0" style="color:var(--navy);font-size:18px">Partner Stores Near You</h2>
+              <a href="location.html" class="d-flex align-items-center gap-1 mt-1 text-decoration-none" style="width:fit-content">
+                <i class="bi bi-crosshair2" style="color:var(--blue);font-size:13px"></i>
+                <span id="zipLabel" class="fw-semibold" style="color:var(--blue);font-size:13px;
+                  text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px">
+                  ZIP: —
+                </span>
+                <span style="color:var(--gray);font-size:12px">(Change)</span>
+              </a>
+            </div>
+            <span id="storeCount" class="fw-bold rounded-pill flex-shrink-0 px-3 py-1"
+                  style="background:rgba(1,46,113,.05);color:var(--navy);font-size:12px;
+                         border:1px solid rgba(1,46,113,.1);margin-top:2px">
+              — stores
+            </span>
+          </div>
+        </div>
+
+        <!-- ── Store list ── -->
+        <div id="store-list" class="d-flex flex-column gap-3 px-3 pt-3 px-md-4 pt-md-4"></div>
+
+        <!-- ── Pagination ── -->
+        <nav class="store-pagination px-3 px-md-4" aria-label="Store list pages">
+          <p class="store-pagination__status" id="store-pagination-status"></p>
+          <div class="store-pagination__nav" id="store-pagination-nav"></div>
+        </nav>
+
+      </section>
+    </div>
+  </div><!-- /body-scroll -->
+
+  <!-- ══ SECTION 6 – Footer (pinned to bottom of screen) ══ -->
+  <footer class="hra-footer hra-footer--pinned">
+    <span class="hra-footer__brand">HRA</span>
+    <span class="hra-footer__url">hraga.com</span>
+  </footer>
+
+  <!-- ══ SECTION 5 – VIEW OFFERS BOTTOM BANNER ══ -->
+  <div class="bottom-banner" onclick="window.location.href='offers.html'">
+    <div>
+      <div class="fw-bold text-white" style="font-size:16px">Offers Near You</div>
+      <div class="d-flex align-items-center gap-2 mt-1 fw-bold" style="color:var(--gold);font-size:12px">
+        <span class="pulse-dot"></span>
+        47 deals available
+      </div>
+    </div>
+    <button class="btn-white shadow"
+            onclick="event.stopPropagation();window.location.href='offers.html'">
+      Browse <i class="bi bi-arrow-right fw-bold"></i>
+    </button>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+  var params  = new URLSearchParams(window.location.search);
+  var zip     = params.get('zip') || '';
+
+  // Update zip label in sub-header
+  var zipLabelEl  = document.getElementById('zipLabel');
+  var storeCountEl = document.getElementById('storeCount');
+  if (zipLabelEl) zipLabelEl.textContent = zip ? 'ZIP: ' + zip : 'Change ZIP';
+
+  // Filter real store data from stores.js
+  var filtered = zip.length >= 3
+    ? STORES.filter(function(s) { return s.zip.includes(zip); })
+    : [];
+
+  var listEl            = document.getElementById('store-list');
+  var paginationNavEl   = document.getElementById('store-pagination-nav');
+  var paginationStatusEl = document.getElementById('store-pagination-status');
+
+  // Update store count badge
+  if (storeCountEl) storeCountEl.textContent = filtered.length + ' store' + (filtered.length !== 1 ? 's' : '');
+
+  // No zip or no results
+  if (!zip || zip.length < 3) {
+    listEl.innerHTML =
+      '<div class="text-center py-5" style="color:var(--gray)">' +
+        '<i class="bi bi-geo-alt" style="font-size:32px"></i>' +
+        '<p class="mt-3 fw-semibold">No zip code selected.</p>' +
+        '<a href="location.html" class="btn-blue mt-2 d-inline-block">Enter your ZIP</a>' +
+      '</div>';
+    return;
+  }
+
+  if (filtered.length === 0) {
+    listEl.innerHTML =
+      '<div class="text-center py-5" style="color:var(--gray)">' +
+        '<i class="bi bi-search" style="font-size:32px"></i>' +
+        '<p class="mt-3 fw-semibold">No stores found for ZIP <strong>' + zip + '</strong>.</p>' +
+        '<a href="location.html" class="btn-blue mt-2 d-inline-block">Try another ZIP</a>' +
+      '</div>';
+    return;
+  }
+
+  var PER_PAGE    = 6;
+  var currentPage = 1;
+  var totalPages  = Math.ceil(filtered.length / PER_PAGE);
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function renderStores() {
+    var start = (currentPage - 1) * PER_PAGE;
+    var slice = filtered.slice(start, start + PER_PAGE);
+    listEl.innerHTML = slice.map(function(s) {
+      var query   = s.address
+        ? s.name + ', ' + s.address + ', ' + s.city + ', ' + s.state + ' ' + s.zip
+        : s.name + ', ' + s.city + ', ' + s.state + ' ' + s.zip;
+      var mapUrl  = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(query);
+      return (
+        '<a href="' + mapUrl + '" target="_blank" rel="noopener" class="store-card">' +
+          '<div class="d-flex align-items-start gap-3">' +
+            '<div class="icon-circle"><i class="bi bi-geo-alt-fill" style="color:var(--navy);font-size:18px"></i></div>' +
+            '<div>' +
+              '<div class="fw-bold" style="color:var(--navy);font-size:16px;line-height:1.25">' + escapeHtml(s.name) + '</div>' +
+              '<div style="color:var(--gray);font-size:13px;font-weight:500;margin-top:2px">' + escapeHtml(s.city) + ', ' + escapeHtml(s.state) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<span class="dist-badge">' + escapeHtml(s.zip) + '</span>' +
+        '</a>'
+      );
+    }).join('');
+  }
+
+  function renderPagination() {
+    var start = (currentPage - 1) * PER_PAGE + 1;
+    var end   = Math.min(currentPage * PER_PAGE, filtered.length);
+    paginationStatusEl.textContent = 'Showing ' + start + '\u2013' + end + ' of ' + filtered.length + ' stores';
+
+    var html = '<button type="button" class="store-pagination__btn" data-action="prev" aria-label="Previous page"' +
+      (currentPage === 1 ? ' disabled' : '') + '><i class="bi bi-chevron-left"></i></button>';
+
+    for (var p = 1; p <= totalPages; p++) {
+      html += '<button type="button" class="store-pagination__btn' + (p === currentPage ? ' is-active' : '') +
+        '" data-page="' + p + '" aria-label="Page ' + p + '"' +
+        (p === currentPage ? ' aria-current="page"' : '') + '>' + p + '</button>';
+    }
+
+    html += '<button type="button" class="store-pagination__btn" data-action="next" aria-label="Next page"' +
+      (currentPage === totalPages ? ' disabled' : '') + '><i class="bi bi-chevron-right"></i></button>';
+
+    paginationNavEl.innerHTML = html;
+  }
+
+  function goToPage(page) {
+    if (page < 1 || page > totalPages || page === currentPage) return;
+    currentPage = page;
+    renderStores();
+    renderPagination();
+    listEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  paginationNavEl.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-page], [data-action]');
+    if (!btn || btn.disabled) return;
+    if (btn.dataset.page)             goToPage(parseInt(btn.dataset.page, 10));
+    else if (btn.dataset.action === 'prev') goToPage(currentPage - 1);
+    else if (btn.dataset.action === 'next') goToPage(currentPage + 1);
+  });
+
+  renderStores();
+  renderPagination();
+})();
+</script>
+</body>
+</html>
