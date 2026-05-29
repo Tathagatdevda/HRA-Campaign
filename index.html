@@ -300,7 +300,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (e) e.preventDefault();
     var zip = document.getElementById('zipInput').value.trim();
     if (zip.length >= 3) {
-      window.location.href = 'index.html?zip=' + encodeURIComponent(zip);
+      window.location.href = 'main.html?zip=' + encodeURIComponent(zip);
     } else {
       document.getElementById('zipInput').focus();
     }
