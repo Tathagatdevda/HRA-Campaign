@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-NMZ4GXJH');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HRA – Find Deals Near You</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="hra.css">
+  <script src="stores.js"></script>
+  <style>
+    :root {
+      --navy:      #012e71;
+      --blue:      #008ed0;
+      --gold:      #ffc631;
+      --step-blue: #5bc8f5;
+      --gray:      #cfcecb;
+      --bg:        #f8f9fd;
+      --fs-xs:   clamp(10px, 1.2vw + 8px,  12px);
+      --fs-sm:   clamp(11px, 1.4vw + 9px,  13px);
+      --fs-base: clamp(13px, 1.6vw + 10px, 15px);
+      --fs-md:   clamp(14px, 2vw  + 10px,  17px);
+      --fs-lg:   clamp(16px, 2.5vw + 11px, 20px);
+      --fs-xl:   clamp(18px, 3vw  + 12px,  26px);
+      --fs-2xl:  clamp(22px, 4vw  + 14px,  34px);
+    }
+    /* Fluid type overrides */
+    .location-card h1 { font-size: var(--fs-2xl) !important; }
+    .location-card p  { font-size: var(--fs-base) !important; }
+    .zip-form input   { font-size: var(--fs-lg) !important; }
+    .zip-form .btn-go { font-size: var(--fs-base) !important; }
+
+    /* Location page uses full-page scroll, not fixed height shell */
+    html, body { height: 100%; }
+
+    .location-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    /* ── Location card ── */
+    .location-card {
+      background: var(--navy);
+      border-radius: 24px;
+      padding: 36px 24px 28px;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(1,46,113,.3);
+    }
+
+    /* Decorative background circle */
+    .location-card::before {
+      content: '';
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 150px; height: 150px;
+      background: rgba(255,255,255,.05);
+      border-radius: 50%;
+      filter: blur(20px);
+      pointer-events: none;
+    }
+
+    /* ── Pin icon wrap ── */
+    .pin-wrap {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    /* ── Pill input ── */
+    .zip-form {
+      background: #fff;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      height: 52px;
+      padding: 5px 5px 5px 20px;
+      width: 100%;
+      max-width: 340px;
+      margin: 0 auto 20px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,.06);
+      transition: transform .2s;
+    }
+    .zip-form:focus-within { transform: scale(1.02); }
+
+    .zip-form input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+      min-width: 0;
+      font-family: inherit;
+    }
+    .zip-form input::placeholder { color: var(--gray); font-weight: 500; }
+
+    .zip-form .btn-go {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 0 28px;
+      height: 40px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background .2s, transform .15s;
+      font-family: inherit;
+    }
+    .zip-form .btn-go:hover  { background: #0070a6; }
+    .zip-form .btn-go:active { transform: scale(.95); }
+
+    /* ── Store result cards ── */
+    .store-result-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .store-result-card:hover {
+      transform: scale(1.01);
+      box-shadow: 0 4px 14px rgba(0,0,0,.12);
+    }
+    #storeResults::-webkit-scrollbar { width: 4px; }
+    #storeResults::-webkit-scrollbar-thumb { background: rgba(255,255,255,.3); border-radius: 4px; }
+
+    /* ── How-it-works steps ── */
+    .how-steps {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    /* connector line between steps */
+    .how-steps::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: calc(50% - 88px);
+      right: calc(50% - 88px);
+      height: 2px;
+      background: rgba(1,46,113,.15);
+      z-index: 0;
+    }
+
+    .how-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      background: transparent;
+      padding: 0 8px;
+    }
+
+    .how-step__circle {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 3px solid var(--step-blue);
+      color: var(--step-blue);
+      font-size: var(--fs-md);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .how-step__label {
+      font-size: var(--fs-sm);
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NMZ4GXJH"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="location-page">
+
+  <!-- ══ SECTION 1 – HEADER ══ -->
+  <header class="hra-header" style="position:sticky;top:0">
+    <img src="Photo/HRA logo.png" alt="HRA" style="height:34px;object-fit:contain;margin:0 auto">
+  </header>
+
+  <!-- ══ SECTION 2 – MAIN CONTENT ══ -->
+  <main class="flex-grow-1 d-flex flex-column align-items-center justify-content-center p-4 p-md-5"
+        style="min-height:calc(100vh - 56px)">
+
+    <!-- Location card -->
+    <div class="location-card">
+
+      <!-- Pin icon -->
+      <div class="pin-wrap">
+        <i class="bi bi-geo-alt-fill" style="color:var(--gold);font-size:28px"></i>
+      </div>
+
+      <h1 class="fw-bold text-white mb-3" style="font-size:clamp(20px,5vw,28px);line-height:1.2">
+        Find deals at HRA stores near you.
+      </h1>
+
+      <p class="mb-4" style="color:var(--gray);font-size:14px;font-weight:500;line-height:1.6">
+        Enter your zip code to see nearby partner stores.
+      </p>
+
+      <!-- Zip input -->
+      <form class="zip-form" onsubmit="handleZip(event)">
+        <input
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="5"
+          placeholder="Enter zip code"
+          id="zipInput"
+          autocomplete="postal-code"
+        >
+        <button type="submit" class="btn-go">Go</button>
+      </form>
+
+      <!-- Live store results -->
+      <div id="storeResults" class="w-100 mt-2 text-start" style="max-height:280px;overflow-y:auto"></div>
+
+      <p class="fw-bold text-uppercase mb-0 mt-3" style="color:var(--gold);font-size:11px;letter-spacing:.14em">
+        5,000+ partner stores &middot; Southeast USA
+      </p>
+
+    </div>
+
+    <!-- ══ SECTION 3 – HOW IT WORKS ══ -->
+    <div class="mt-5 w-100 d-flex justify-content-center px-2">
+      <div class="how-steps">
+
+        <div class="how-step">
+          <div class="how-step__circle">1</div>
+          <span class="how-step__label">Enter zip</span>
+        </div>
+
+        <div class="how-step">
+          <div class="how-step__circle">2</div>
+          <span class="how-step__label">See stores</span>
+        </div>
+
+        <div class="how-step">
+          <div class="how-step__circle">3</div>
+          <span class="how-step__label">Claim deal</span>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Go button / form submit → navigate to store list page
+  function handleZip(e) {
+    if (e) e.preventDefault();
+    var zip = document.getElementById('zipInput').value.trim();
+    if (zip.length >= 3) {
+      window.location.href = 'index.html?zip=' + encodeURIComponent(zip);
+    } else {
+      document.getElementById('zipInput').focus();
+    }
+  }
+
+  // Live preview while typing
+  function liveSearch(zip) {
+    var resultsBox = document.getElementById('storeResults');
+    if (zip.length < 3) { resultsBox.innerHTML = ''; return; }
+
+    var filtered = STORES.filter(function(s) { return s.zip.includes(zip); });
+
+    if (filtered.length === 0) {
+      resultsBox.innerHTML =
+        '<div class="text-white text-center fw-semibold py-2" style="font-size:13px">No stores found for that zip code.</div>';
+      return;
+    }
+
+    resultsBox.innerHTML = filtered.slice(0, 5).map(function(s) {
+      return '<div class="store-result-card">' +
+        '<div>' +
+          '<div class="fw-bold" style="color:#012e71;font-size:14px;line-height:1.3">' + s.name + '</div>' +
+          '<div style="color:#666;font-size:12px;font-weight:600;margin-top:2px">' + s.city + ', ' + s.state + ' &middot; ' + s.zip + '</div>' +
+        '</div>' +
+        '<span style="color:#008ed0;font-size:12px;font-weight:700;flex-shrink:0">' + filtered.length + ' found</span>' +
+      '</div>';
+    }).slice(0, 1).join('') +
+    (filtered.length > 1
+      ? '<div class="text-white text-center fw-semibold py-1" style="font-size:12px;opacity:.7">+' + (filtered.length - 1) + ' more — press Go to see all</div>'
+      : '');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('zipInput');
+    input.addEventListener('input', function() { liveSearch(input.value.trim()); });
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

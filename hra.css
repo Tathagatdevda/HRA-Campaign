@@ -1,0 +1,185 @@
+/* ================================================================
+   HRA Campaign – Shared Design Tokens & Utilities
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* ── Design tokens ─────────────────────────────────────────── */
+:root {
+  --navy:  #012e71;
+  --blue:  #008ed0;
+  --gold:  #ffc631;   /* updated brand accent */
+  --gray:  #cfcecb;
+  --bg:    #f8f9fd;
+
+  /* ── Fluid type scale (min → max via viewport) ── */
+  --fs-xs:   clamp(10px, 1.2vw + 8px,  12px);
+  --fs-sm:   clamp(11px, 1.4vw + 9px,  13px);
+  --fs-base: clamp(13px, 1.6vw + 10px, 15px);
+  --fs-md:   clamp(14px, 2vw  + 10px,  17px);
+  --fs-lg:   clamp(16px, 2.5vw + 11px, 20px);
+  --fs-xl:   clamp(18px, 3vw  + 12px,  26px);
+  --fs-2xl:  clamp(22px, 4vw  + 14px,  34px);
+}
+
+/* ── Base ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: var(--fs-base);
+  background: var(--bg);
+  color: #1a202c;
+  -webkit-font-smoothing: antialiased;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1 { font-size: var(--fs-2xl); }
+h2 { font-size: var(--fs-xl);  }
+h3 { font-size: var(--fs-lg);  }
+h4 { font-size: var(--fs-md);  }
+p, span, div { font-size: inherit; }
+
+/* ── App shell (fixed-height pages) ───────────────────────── */
+.app-shell {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+  position: relative;
+}
+
+/* ── Scrollable body ───────────────────────────────────────── */
+.body-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.body-scroll::-webkit-scrollbar { display: none; }
+
+/* ── Horizontal scroll strip ──────────────────────────────── */
+.h-scroll {
+  display: flex;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  gap: 12px;
+  padding-bottom: 4px;
+}
+.h-scroll::-webkit-scrollbar { display: none; }
+
+/* ── HRA Header ────────────────────────────────────────────── */
+.hra-header {
+  background: var(--navy);
+  height: 56px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.hra-header__brand   { font-size: var(--fs-lg); font-weight: 800; color: #fff; line-height: 1; }
+.hra-header__tagline { font-size: var(--fs-xs); font-weight: 700; color: var(--gold); letter-spacing: .08em; text-transform: uppercase; line-height: 1; margin-top: 2px; }
+
+/* ── Buttons ───────────────────────────────────────────────── */
+.btn-blue {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  padding: 7px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: background .2s, transform .15s;
+  white-space: nowrap;
+}
+.btn-blue:hover  { background: #0070a6; color: #fff; }
+.btn-blue:active { transform: scale(.95); }
+
+.btn-navy-outline {
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid #fff;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: var(--fs-xs);
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background .2s;
+  white-space: nowrap;
+}
+.btn-navy-outline:hover { background: rgba(255,255,255,.1); }
+
+.btn-white {
+  background: #fff;
+  color: var(--navy);
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: var(--fs-base);
+  padding: 10px 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform .15s;
+}
+.btn-white:hover  { color: var(--navy); }
+.btn-white:active { transform: scale(.95); }
+
+/* ── Distance badge ────────────────────────────────────────── */
+.dist-badge {
+  background: var(--blue);
+  color: #fff;
+  border-radius: 50px;
+  font-weight: 700;
+  padding: 4px 10px;
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Pulse dot ─────────────────────────────────────────────── */
+@keyframes hra-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .35; }
+}
+.pulse-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: hra-pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+/* ── Footer ────────────────────────────────────────────────── */
+.hra-footer {
+  background: var(--navy);
+  border-top: 2px solid var(--gold);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Pinned to viewport bottom inside .app-shell */
+.hra-footer--pinned {
+  position: relative;
+  z-index: 30;
+  width: 100%;
+}
+.hra-footer__brand { font-weight: 700; color: #fff; font-size: var(--fs-base); letter-spacing: .05em; }
+.hra-footer__url   { font-weight: 700; color: var(--gold); font-size: var(--fs-sm); letter-spacing: .05em; }

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Figma__get_metadata",
+      "mcp__Figma__get_design_context",
+      "mcp__Figma__get_screenshot",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "WebFetch(domain:www.figma.com)",
+      "Read(//c/Users/DELL/Downloads/**)",
+      "Bash(powershell -Command \"Expand-Archive -Path 'Mobilelandingpagedesign-main.zip' -DestinationPath 'Mobilelandingpagedesign-main' -Force\")",
+      "Bash(Get-ChildItem -Recurse \"C:\\\\Users\\\\DELL\\\\Downloads\\\\Mobilelandingpagedesign-main\")",
+      "Bash(Select-Object FullName)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\DELL\\\\Downloads\\\\Mobilelandingpagedesign-main\" -Recurse | ForEach-Object { $_.FullName })",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}

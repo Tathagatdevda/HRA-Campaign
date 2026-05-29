@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-NMZ4GXJH');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HRA – Offers Near You</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="hra.css">
+  <style>
+    :root {
+      --navy: #012e71;
+      --blue: #008ed0;
+      --gold: #ffc631;
+      --gray: #cfcecb;
+      --bg:   #f8f9fd;
+      --fs-xs:   clamp(10px, 1.2vw + 8px,  12px);
+      --fs-sm:   clamp(11px, 1.4vw + 9px,  13px);
+      --fs-base: clamp(13px, 1.6vw + 10px, 15px);
+      --fs-md:   clamp(14px, 2vw  + 10px,  17px);
+      --fs-lg:   clamp(16px, 2.5vw + 11px, 20px);
+      --fs-xl:   clamp(18px, 3vw  + 12px,  26px);
+      --fs-2xl:  clamp(22px, 4vw  + 14px,  34px);
+    }
+    /* Fluid type overrides */
+    .filter-pill        { font-size: var(--fs-sm) !important; }
+    .featured-card h2   { font-size: var(--fs-lg) !important; }
+    .offer-card__title  { font-size: var(--fs-md) !important; }
+    .offer-card__vendor,
+    .offer-card__stores { font-size: var(--fs-xs) !important; }
+    .btn-claim          { font-size: var(--fs-sm) !important; }
+    .store-mini span.fw-bold { font-size: var(--fs-sm) !important; }
+    .btn-load-more      { font-size: var(--fs-base) !important; }
+
+    /* ── Filter pills ── */
+    .filter-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--bg);
+      height: 48px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .filter-scroll {
+      display: flex;
+      overflow-x: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      gap: 8px;
+      padding: 0 12px;
+      width: 100%;
+      align-items: center;
+    }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+
+    .filter-pill {
+      flex-shrink: 0;
+      height: 32px;
+      padding: 0 14px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid var(--navy);
+      background: #fff;
+      color: var(--navy);
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
+    .filter-pill.active,
+    .filter-pill:hover {
+      background: var(--navy);
+      color: #fff;
+    }
+    .filter-pill.active { box-shadow: 0 2px 6px rgba(1,46,113,.2); }
+
+    /* ── Featured card ── */
+    .featured-card {
+      width: 90%;
+      flex-shrink: 0;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .2s;
+      scroll-snap-align: center;
+    }
+    .featured-card:hover { transform: scale(1.02); }
+    @media (min-width: 768px) { .featured-card { width: 350px; } }
+
+    .featured-left  { width: 65%; display: flex; flex-direction: column; align-items: flex-start; padding-right: 12px; z-index: 1; }
+    .featured-right { width: 35%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; z-index: 1; }
+
+    .featured-divider-light { border-left: 1px solid rgba(255,255,255,.2); padding-left: 16px; margin-left: 4px; }
+    .featured-divider-dark  { border-left: 1px solid rgba(1,46,113,.2); padding-left: 16px; margin-left: 4px; }
+
+    .featured-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-bottom: 8px;
+    }
+
+    /* ── Offer grid card ── */
+    .offer-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow .2s;
+    }
+    .offer-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+    @media (min-width: 768px) { .offer-card { padding: 16px; border-radius: 12px; } }
+
+    .offer-card__bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+    }
+    @media (min-width: 768px) { .offer-card__bar { height: 6px; } }
+
+    .offer-card__title {
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-top: 6px;
+      min-height: 38px;
+    }
+    @media (min-width: 768px) {
+      .offer-card__title { font-size: 15px; min-height: 42px; }
+    }
+
+    .offer-card__vendor { color: var(--gray); font-size: 11px; font-weight: 600; }
+    @media (min-width: 768px) { .offer-card__vendor { font-size: 13px; } }
+
+    .offer-card__stores { color: var(--gray); font-size: 11px; font-weight: 500; margin-top: 2px; }
+    @media (min-width: 768px) { .offer-card__stores { font-size: 12px; } }
+
+    .btn-claim {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 13px;
+      height: 32px;
+      width: 100%;
+      cursor: pointer;
+      margin-top: auto;
+      flex-shrink: 0;
+      transition: background .2s, transform .1s;
+    }
+    .btn-claim:hover  { background: #0070a6; }
+    .btn-claim:active { transform: scale(.95); }
+    @media (min-width: 768px) { .btn-claim { height: 40px; font-size: 14px; } }
+
+    /* ── Nearby store mini-card ── */
+    .store-mini {
+      width: 140px;
+      flex-shrink: 0;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: box-shadow .2s, transform .15s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .store-mini:hover { box-shadow: 0 4px 12px rgba(0,0,0,.1); transform: translateY(-2px); color: inherit; }
+    .store-mini:active { transform: scale(.97); }
+    @media (min-width: 768px) { .store-mini { width: 180px; padding: 16px; border-radius: 12px; } }
+
+    /* ── Load more ── */
+    .btn-load-more {
+      background: transparent;
+      border: 2px solid var(--blue);
+      color: var(--blue);
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 14px;
+      height: 44px;
+      width: 80%;
+      max-width: 360px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-load-more:hover { background: rgba(0,142,208,.05); }
+
+    /* ── Snap scroll ── */
+    .snap-scroll {
+      scroll-snap-type: x mandatory;
+    }
+  </style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NMZ4GXJH"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="app-shell">
+
+  <!-- ══ SECTION 1 – HEADER ══ -->
+  <header class="hra-header" style="cursor:pointer" onclick="window.location.href='index.html'">
+    <img src="Photo/HRA logo.png" alt="HRA" style="height:34px;object-fit:contain">
+
+    <span class="position-absolute start-50 translate-middle-x fw-semibold"
+          style="color:#cfcecb;font-size:12px;pointer-events:none">
+      Offers &middot; 30080
+    </span>
+
+    <button class="btn-navy-outline" onclick="event.stopPropagation();window.location.href='location.html'">
+      Change Zip
+    </button>
+  </header>
+
+  <!-- ══ SCROLLABLE BODY ══ -->
+  <div class="body-scroll">
+    <div style="max-width:1152px;margin:0 auto;display:flex;flex-direction:column">
+
+      <!-- ══ SECTION 2 – SLIM BANNER ══ -->
+      <section class="mx-0 mx-md-3 mt-md-3" style="background:var(--navy);padding:12px 16px;border-radius:0"
+               class="rounded-0 rounded-md-4 shadow-sm">
+        <div style="background:var(--navy);padding:12px 16px 10px;border-radius:0"
+             class="d-flex justify-content-between align-items-start">
+          <h1 class="fw-bold text-white mb-0" style="font-size:16px;line-height:1.3">
+            47 Deals Near You &mdash; 30080.
+          </h1>
+          <span class="fw-bold text-white rounded-pill flex-shrink-0 ms-2"
+                style="background:var(--blue);font-size:10px;padding:3px 10px">
+            Updated today
+          </span>
+        </div>
+        <p class="fw-bold mb-0" style="color:var(--gold);font-size:11px;padding:0 16px 12px">
+          Exclusive to HRA partner stores.
+        </p>
+      </section>
+
+      <!-- ══ SECTION 3 – FILTER BAR ══ -->
+      <div class="filter-bar mt-0">
+        <div class="filter-scroll">
+          <button class="filter-pill active" onclick="setFilter(this)">All</button>
+          <button class="filter-pill" onclick="setFilter(this)">Beverages</button>
+          <button class="filter-pill" onclick="setFilter(this)">Snacks</button>
+          <button class="filter-pill" onclick="setFilter(this)">Energy</button>
+          <button class="filter-pill" onclick="setFilter(this)">Food</button>
+          <button class="filter-pill" onclick="setFilter(this)">Household</button>
+        </div>
+      </div>
+
+      <!-- ══ SECTION 4 – FEATURED OFFERS CAROUSEL ══ -->
+      <div class="pt-3 flex-shrink-0 w-100">
+        <div class="h-scroll snap-scroll px-3 px-md-4 pb-2">
+
+          <!-- Featured 1 – navy -->
+          <div class="featured-card" style="background:var(--navy)"
+               onclick="window.location.href='claim.html'">
+            <div class="featured-left">
+              <span class="featured-tag" style="background:var(--gold);color:var(--navy)">Featured</span>
+              <h2 class="fw-bold text-white mb-1" style="font-size:16px;line-height:1.3">
+                Buy 1 Get 1 &mdash; Red Bull 12oz
+              </h2>
+              <span class="fw-bold mb-3" style="color:var(--blue);font-size:12px">Red Bull &times; HRA</span>
+              <span class="fw-bold mt-auto" style="color:var(--gold);font-size:11px">Expires in 2d 14h</span>
+            </div>
+            <div class="featured-right featured-divider-light">
+              <button class="btn-claim" style="background:var(--blue);color:#fff"
+                      onclick="event.stopPropagation();window.location.href='claim.html'">
+                Claim
+              </button>
+            </div>
+          </div>
+
+          <!-- Featured 2 – blue -->
+          <div class="featured-card" style="background:var(--blue)"
+               onclick="window.location.href='claim.html'">
+            <div class="featured-left">
+              <span class="featured-tag" style="background:var(--gold);color:var(--navy)">Featured</span>
+              <h2 class="fw-bold text-white mb-1" style="font-size:16px;line-height:1.3">
+                $2 Off &mdash; Monster Energy 16oz
+              </h2>
+              <span class="fw-bold mb-3" style="color:var(--navy);font-size:12px;opacity:.85">Monster &times; HRA</span>
+              <span class="fw-bold mt-auto" style="color:var(--gold);font-size:11px">Expires in 1d 12h</span>
+            </div>
+            <div class="featured-right featured-divider-light">
+              <button class="btn-claim" style="background:#fff;color:var(--blue)"
+                      onclick="event.stopPropagation();window.location.href='claim.html'">
+                Claim
+              </button>
+            </div>
+          </div>
+
+          <!-- Featured 3 – gold -->
+          <div class="featured-card" style="background:var(--gold)"
+               onclick="window.location.href='claim.html'">
+            <div class="featured-left">
+              <span class="featured-tag" style="background:var(--navy);color:#fff">Featured</span>
+              <h2 class="fw-bold mb-1" style="color:var(--navy);font-size:16px;line-height:1.3">
+                Free Coffee with Any Snack
+              </h2>
+              <span class="fw-bold mb-3" style="color:rgba(1,46,113,.8);font-size:12px">HRA Rewards</span>
+              <span class="fw-bold mt-auto" style="color:var(--navy);font-size:11px">Expires in 5d 8h</span>
+            </div>
+            <div class="featured-right featured-divider-dark">
+              <button class="btn-claim" style="background:var(--blue);color:#fff"
+                      onclick="event.stopPropagation();window.location.href='claim.html'">
+                Claim
+              </button>
+            </div>
+          </div>
+
+          <div style="width:10px;flex-shrink:0"></div>
+        </div>
+      </div>
+
+      <!-- ══ SECTION 5 – OFFERS GRID ══ -->
+      <div class="px-3 px-md-4 pt-3 pb-2">
+        <div class="row g-2 g-md-3 row-cols-2 row-cols-md-3 row-cols-lg-4">
+
+          <!-- Offer 1 -->
+          <div class="col">
+            <div class="offer-card h-100">
+              <div class="offer-card__bar" style="background:var(--blue)"></div>
+              <div class="offer-card__title">Save $1 on Coca-Cola 20oz</div>
+              <div class="d-flex flex-column mt-2 mb-3">
+                <span class="offer-card__vendor">Coca-Cola &times; HRA</span>
+                <span class="offer-card__stores">12 stores near you</span>
+              </div>
+              <button class="btn-claim" onclick="window.location.href='claim.html'">Claim</button>
+            </div>
+          </div>
+
+          <!-- Offer 2 -->
+          <div class="col">
+            <div class="offer-card h-100">
+              <div class="offer-card__bar" style="background:var(--gold)"></div>
+              <div class="offer-card__title">2 for $3 Lay's Family Pack</div>
+              <div class="d-flex flex-column mt-2 mb-3">
+                <span class="offer-card__vendor">Frito-Lay &times; HRA</span>
+                <span class="offer-card__stores">18 stores near you</span>
+              </div>
+              <button class="btn-claim" onclick="window.location.href='claim.html'">Claim</button>
+            </div>
+          </div>
+
+          <!-- Offer 3 -->
+          <div class="col">
+            <div class="offer-card h-100">
+              <div class="offer-card__bar" style="background:var(--blue)"></div>
+              <div class="offer-card__title">$0.50 off Monster Energy</div>
+              <div class="d-flex flex-column mt-2 mb-3">
+                <span class="offer-card__vendor">Monster &times; HRA</span>
+                <span class="offer-card__stores">8 stores near you</span>
+              </div>
+              <button class="btn-claim" onclick="window.location.href='claim.html'">Claim</button>
+            </div>
+          </div>
+
+          <!-- Offer 4 -->
+          <div class="col">
+            <div class="offer-card h-100">
+              <div class="offer-card__bar" style="background:var(--gold)"></div>
+              <div class="offer-card__title">Buy 2 Get 1 Doritos</div>
+              <div class="d-flex flex-column mt-2 mb-3">
+                <span class="offer-card__vendor">Frito-Lay &times; HRA</span>
+                <span class="offer-card__stores">14 stores near you</span>
+              </div>
+              <button class="btn-claim" onclick="window.location.href='claim.html'">Claim</button>
+            </div>
+          </div>
+
+          <!-- Offer 5 -->
+          <div class="col">
+            <div class="offer-card h-100">
+              <div class="offer-card__bar" style="background:var(--blue)"></div>
+              <div class="offer-card__title">$1.50 off Gatorade 28oz</div>
+              <div class="d-flex flex-column mt-2 mb-3">
+                <span class="offer-card__vendor">PepsiCo &times; HRA</span>
+                <span class="offer-card__stores">10 stores near you</span>
+              </div>
+              <button class="btn-claim" onclick="window.location.href='claim.html'">Claim</button>
+            </div>
+          </div>
+
+          <!-- Offer 6 -->
+          <div class="col">
+            <div class="offer-card h-100">
+              <div class="offer-card__bar" style="background:var(--gold)"></div>
+              <div class="offer-card__title">Save $1 on Cheetos</div>
+              <div class="d-flex flex-column mt-2 mb-3">
+                <span class="offer-card__vendor">Frito-Lay &times; HRA</span>
+                <span class="offer-card__stores">15 stores near you</span>
+              </div>
+              <button class="btn-claim" onclick="window.location.href='claim.html'">Claim</button>
+            </div>
+          </div>
+
+          <!-- Offer 7 -->
+          <div class="col">
+            <div class="offer-card h-100">
+              <div class="offer-card__bar" style="background:var(--blue)"></div>
+              <div class="offer-card__title">2 for $1 Arizona Iced Tea</div>
+              <div class="d-flex flex-column mt-2 mb-3">
+                <span class="offer-card__vendor">Arizona &times; HRA</span>
+                <span class="offer-card__stores">6 stores near you</span>
+              </div>
+              <button class="btn-claim" onclick="window.location.href='claim.html'">Claim</button>
+            </div>
+          </div>
+
+          <!-- Offer 8 -->
+          <div class="col">
+            <div class="offer-card h-100">
+              <div class="offer-card__bar" style="background:var(--navy)"></div>
+              <div class="offer-card__title">$0.75 off Nature's Own Bread</div>
+              <div class="d-flex flex-column mt-2 mb-3">
+                <span class="offer-card__vendor">Flowers Foods &times; HRA</span>
+                <span class="offer-card__stores">4 stores near you</span>
+              </div>
+              <button class="btn-claim" onclick="window.location.href='claim.html'">Claim</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ SECTION 6 – NEARBY STORES STRIP ══ -->
+      <div class="mt-3 mt-md-5 pt-3 flex-shrink-0 w-100" style="border-top:1px solid rgba(207,206,203,.3)">
+        <h3 class="fw-bold px-3 px-md-4 mb-2 mb-md-3" style="color:var(--navy);font-size:14px">
+          Stores with Offers Near You
+        </h3>
+        <div class="h-scroll px-3 px-md-4 pb-3">
+
+          <a href="index.html" class="store-mini">
+            <span class="fw-bold d-block text-truncate" style="color:var(--navy);font-size:13px">QuickStop Mart</span>
+            <div class="my-2"><span class="dist-badge" style="font-size:11px">0.2 mi</span></div>
+            <span class="fw-bold mt-auto d-block text-truncate" style="color:var(--gold);font-size:10px">Offers available</span>
+          </a>
+
+          <a href="index.html" class="store-mini">
+            <span class="fw-bold d-block text-truncate" style="color:var(--navy);font-size:13px">Sunrise Foods</span>
+            <div class="my-2"><span class="dist-badge" style="font-size:11px">0.5 mi</span></div>
+            <span class="fw-bold mt-auto d-block text-truncate" style="color:var(--gold);font-size:10px">Offers available</span>
+          </a>
+
+          <a href="index.html" class="store-mini">
+            <span class="fw-bold d-block text-truncate" style="color:var(--navy);font-size:13px">Metro Express</span>
+            <div class="my-2"><span class="dist-badge" style="font-size:11px">0.8 mi</span></div>
+            <span class="fw-bold mt-auto d-block text-truncate" style="color:var(--gold);font-size:10px">Offers available</span>
+          </a>
+
+          <a href="index.html" class="store-mini">
+            <span class="fw-bold d-block text-truncate" style="color:var(--navy);font-size:13px">Corner Fuel &amp; Go</span>
+            <div class="my-2"><span class="dist-badge" style="font-size:11px">1.1 mi</span></div>
+            <span class="fw-bold mt-auto d-block text-truncate" style="color:var(--gold);font-size:10px">Offers available</span>
+          </a>
+
+          <a href="index.html" class="store-mini">
+            <span class="fw-bold d-block text-truncate" style="color:var(--navy);font-size:13px">Eastside Quick Shop</span>
+            <div class="my-2"><span class="dist-badge" style="font-size:11px">1.4 mi</span></div>
+            <span class="fw-bold mt-auto d-block text-truncate" style="color:var(--gold);font-size:10px">Offers available</span>
+          </a>
+
+          <div style="width:10px;flex-shrink:0"></div>
+        </div>
+      </div>
+
+      <!-- ══ SECTION 7 – LOAD MORE ══ -->
+      <div class="mt-2 mt-md-4 d-flex flex-column align-items-center mb-5 pb-3 px-4 w-100">
+        <button class="btn-load-more">Load More Offers</button>
+        <span class="mt-2 fw-medium" style="color:var(--gray);font-size:12px">Showing 8 of 47 deals.</span>
+      </div>
+
+      <!-- ══ SECTION 8 – FOOTER ══ -->
+      <footer class="hra-footer mt-auto">
+        <span class="hra-footer__brand">HRA</span>
+        <span class="hra-footer__url">hraga.com</span>
+      </footer>
+
+    </div>
+  </div><!-- /body-scroll -->
+
+</div>
+
+<script>
+  function setFilter(el) {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
