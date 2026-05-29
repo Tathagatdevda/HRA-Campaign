@@ -7,7 +7,6 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-WFP0ZEF0RH');
 </script>
   <!-- Google Tag Manager -->
@@ -40,13 +39,12 @@
       --fs-xl:   clamp(18px, 3vw  + 12px,  26px);
       --fs-2xl:  clamp(22px, 4vw  + 14px,  34px);
     }
-    /* Fluid type overrides */
+
     .location-card h1 { font-size: var(--fs-2xl) !important; }
     .location-card p  { font-size: var(--fs-base) !important; }
     .zip-form input   { font-size: var(--fs-lg) !important; }
     .zip-form .btn-go { font-size: var(--fs-base) !important; }
 
-    /* Location page uses full-page scroll, not fixed height shell */
     html, body { height: 100%; }
 
     .location-page {
@@ -69,7 +67,6 @@
       box-shadow: 0 20px 60px rgba(1,46,113,.3);
     }
 
-    /* Decorative background circle */
     .location-card::before {
       content: '';
       position: absolute;
@@ -138,7 +135,7 @@
     .zip-form .btn-go:hover  { background: #0070a6; }
     .zip-form .btn-go:active { transform: scale(.95); }
 
-    /* ── Store result cards ── */
+    /* ── Store result cards (hover effect removed) ── */
     .store-result-card {
       background: #fff;
       border-radius: 10px;
@@ -149,14 +146,38 @@
       align-items: center;
       text-decoration: none;
       box-shadow: 0 2px 8px rgba(0,0,0,.08);
-      transition: transform .15s, box-shadow .15s;
     }
-    .store-result-card:hover {
-      transform: scale(1.01);
-      box-shadow: 0 4px 14px rgba(0,0,0,.12);
-    }
+
     #storeResults::-webkit-scrollbar { width: 4px; }
     #storeResults::-webkit-scrollbar-thumb { background: rgba(255,255,255,.3); border-radius: 4px; }
+
+    /* ── Auto-detect button ── */
+    .btn-locate {
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      color: #fff;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 7px 18px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .2s;
+      font-family: inherit;
+      margin-bottom: 16px;
+    }
+    .btn-locate:hover { background: rgba(255,255,255,0.2); }
+    .btn-locate:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ── Location status message ── */
+    .location-status {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      min-height: 18px;
+    }
 
     /* ── How-it-works steps ── */
     .how-steps {
@@ -168,7 +189,6 @@
       max-width: 360px;
     }
 
-    /* connector line between steps */
     .how-steps::before {
       content: '';
       position: absolute;
@@ -223,7 +243,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- ══ SECTION 1 – HEADER ══ -->
   <header class="hra-header" style="position:sticky;top:0">
-    <img src="HRA logo.png" alt="HRA" style="height:34px;object-fit:contain;margin:0 auto">
+    <img src="Photo/HRA logo.png" alt="HRA" style="height:34px;object-fit:contain;margin:0 auto">
   </header>
 
   <!-- ══ SECTION 2 – MAIN CONTENT ══ -->
@@ -242,9 +262,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         Find deals at HRA stores near you.
       </h1>
 
-      <p class="mb-4" style="color:var(--gray);font-size:14px;font-weight:500;line-height:1.6">
+      <p class="mb-3" style="color:var(--gray);font-size:14px;font-weight:500;line-height:1.6">
         Enter your zip code to see nearby partner stores.
       </p>
+
+      <!-- Auto-detect location button -->
+      <button class="btn-locate" id="btnLocate" onclick="autoDetectLocation()">
+        <i class="bi bi-crosshair"></i> Use my location
+      </button>
+
+      <!-- Status message for auto-detect -->
+      <div class="location-status" id="locationStatus"></div>
 
       <!-- Zip input -->
       <form class="zip-form" onsubmit="handleZip(event)">
@@ -253,7 +281,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           inputmode="numeric"
           pattern="[0-9]*"
           maxlength="5"
-          placeholder="Enter zip code"
+          placeholder="Or enter zip code"
           id="zipInput"
           autocomplete="postal-code"
         >
@@ -264,7 +292,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div id="storeResults" class="w-100 mt-2 text-start" style="max-height:280px;overflow-y:auto"></div>
 
       <p class="fw-bold text-uppercase mb-0 mt-3" style="color:var(--gold);font-size:11px;letter-spacing:.14em">
-        5,000+ partner stores &middot; Southeast USA
+        5,500+ partner stores &middot; Southeast USA
       </p>
 
     </div>
@@ -295,7 +323,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <script>
-  // Go button / form submit → navigate to store list page
+  // ── Go button / form submit ──
   function handleZip(e) {
     if (e) e.preventDefault();
     var zip = document.getElementById('zipInput').value.trim();
@@ -306,7 +334,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
   }
 
-  // Live preview while typing
+  // ── Live preview while typing ──
   function liveSearch(zip) {
     var resultsBox = document.getElementById('storeResults');
     if (zip.length < 3) { resultsBox.innerHTML = ''; return; }
@@ -319,20 +347,83 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       return;
     }
 
-    resultsBox.innerHTML = filtered.slice(0, 5).map(function(s) {
+    resultsBox.innerHTML = filtered.slice(0, 1).map(function(s) {
       return '<div class="store-result-card">' +
         '<div>' +
           '<div class="fw-bold" style="color:#012e71;font-size:14px;line-height:1.3">' + s.name + '</div>' +
           '<div style="color:#666;font-size:12px;font-weight:600;margin-top:2px">' + s.city + ', ' + s.state + ' &middot; ' + s.zip + '</div>' +
         '</div>' +
-        '<span style="color:#008ed0;font-size:12px;font-weight:700;flex-shrink:0">' + filtered.length + ' Stores found</span>' +
+        '<span style="color:#008ed0;font-size:12px;font-weight:700;flex-shrink:0">' + filtered.length + ' Stores Found</span>' +
       '</div>';
-    }).slice(0, 1).join('') +
+    }).join('') +
     (filtered.length > 1
-      ? '<div class="text-white text-center fw-semibold py-1" style="font-size:12px;opacity:.7">+' + (filtered.length - 1) + ' more — press Go to see all</div>'
+      ? '<div class="text-center fw-bold py-1" style="font-size:13px;color:var(--gold);background:rgba(255,255,255,0.1);border-radius:8px;padding:6px 10px!important">+' + (filtered.length - 1) + ' more stores — press Go to see all</div>'
       : '');
   }
 
+  // ── Auto-detect location using GPS ──
+  function autoDetectLocation() {
+    var btn = document.getElementById('btnLocate');
+    var status = document.getElementById('locationStatus');
+
+    if (!navigator.geolocation) {
+      status.style.color = '#ff6b6b';
+      status.textContent = 'Geolocation is not supported by your browser.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Detecting...';
+    status.style.color = 'var(--gray)';
+    status.textContent = 'Getting your location...';
+
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+
+        // Use free reverse geocoding API to get zip code from coordinates
+        fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon)
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            var zip = data.address && (data.address.postcode || '');
+            zip = zip.replace(/\D/g, '').substring(0, 5); // keep only digits, max 5
+
+            if (zip && zip.length >= 3) {
+              document.getElementById('zipInput').value = zip;
+              status.style.color = '#5bc8f5';
+              status.textContent = '📍 Location detected: ' + zip;
+              liveSearch(zip);
+            } else {
+              status.style.color = '#ff6b6b';
+              status.textContent = 'Could not find zip code. Please enter it manually.';
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-crosshair"></i> Use my location';
+          })
+          .catch(function() {
+            status.style.color = '#ff6b6b';
+            status.textContent = 'Could not get zip code. Please enter it manually.';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-crosshair"></i> Use my location';
+          });
+      },
+      function(error) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-crosshair"></i> Use my location';
+        status.style.color = '#ff6b6b';
+        if (error.code === error.PERMISSION_DENIED) {
+          status.textContent = 'Location access denied. Please enter zip manually.';
+        } else {
+          status.textContent = 'Could not detect location. Please enter zip manually.';
+        }
+      },
+      { timeout: 10000 }
+    );
+  }
+
+  // ── Input listener ──
   document.addEventListener('DOMContentLoaded', function() {
     var input = document.getElementById('zipInput');
     input.addEventListener('input', function() { liveSearch(input.value.trim()); });
